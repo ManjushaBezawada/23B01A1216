@@ -568,3 +568,13 @@ function notify_all(student_ids, message):
 ## Conclusion
 
 Saving data first and sending emails through a queue makes the notification system faster and more reliable.
+
+
+# Stage 6
+
+## Approach
+
+- Fetch notifications from the API.
+- Assign priority (Placement > Result > Event).
+- Sort notifications by priority and latest time.
+- Display the top 10 notifications.
