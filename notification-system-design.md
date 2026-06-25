@@ -1,5 +1,7 @@
 # Notification System Design
 
+# Stage 1
+
 ## Introduction
 
 This document contains the REST API design for the Campus Notification System. These APIs help students view notifications related to placements, events, and results. Users can also mark notifications as read and delete them if needed. Admin users can create new notifications.
@@ -240,3 +242,170 @@ Content-Type: application/json
 ## Conclusion
 
 This REST API design provides the basic operations needed for a campus notification system. It allows students to view and manage notifications while allowing administrators to create new notifications. The APIs follow REST principles with clear endpoints, standard HTTP methods, and JSON request and response formats.
+
+
+
+
+# Stage 2
+
+## Database Selection
+
+For this notification system, I have chosen **MySQL** as the database.
+
+### Why MySQL?
+
+* MySQL is easy to learn and use.
+* It stores data in tables, so the notification data can be organized properly.
+* It supports SQL queries to insert, update, delete, and retrieve data.
+* It is reliable and commonly used for web applications.
+
+---
+
+## Database Schema
+
+The notification details can be stored in a table called **notifications**.
+
+| Column Name | Data Type    | Description                                             |
+| ----------- | ------------ | ------------------------------------------------------- |
+| id          | VARCHAR(20)  | Stores the unique notification ID                       |
+| title       | VARCHAR(100) | Stores the notification title                           |
+| message     | TEXT         | Stores the notification message                         |
+| category    | VARCHAR(50)  | Stores the notification type (Placement, Event, Result) |
+| isRead      | BOOLEAN      | Shows whether the notification is read or not           |
+| createdAt   | DATETIME     | Stores the date and time of notification creation       |
+
+---
+
+## Problems When Data Increases
+
+As more notifications are stored in the database, some problems may occur.
+
+* Fetching notifications may become slower.
+* Searching for a notification may take more time.
+* The database size will increase.
+* If many users use the application at the same time, performance may decrease.
+
+---
+
+## Solutions
+
+These problems can be reduced by using the following methods.
+
+* Create indexes on frequently searched columns like `id`.
+* Use pagination to load only a few notifications at a time.
+* Remove or archive old notifications that are no longer needed.
+* Regularly optimize the database.
+
+---
+
+## SQL Queries
+
+### 1. Get All Notifications
+
+**API**
+
+```text
+GET /api/notifications
+```
+
+**SQL Query**
+
+```sql
+SELECT * FROM notifications;
+```
+
+---
+
+### 2. Get Notification By ID
+
+**API**
+
+```text
+GET /api/notifications/{id}
+```
+
+**SQL Query**
+
+```sql
+SELECT * FROM notifications
+WHERE id = ?;
+```
+
+---
+
+### 3. Create Notification
+
+**API**
+
+```text
+POST /api/notifications
+```
+
+**SQL Query**
+
+```sql
+INSERT INTO notifications
+(id, title, message, category, isRead, createdAt)
+VALUES
+(?, ?, ?, ?, FALSE, NOW());
+```
+
+---
+
+### 4. Mark Notification as Read
+
+**API**
+
+```text
+PATCH /api/notifications/{id}/read
+```
+
+**SQL Query**
+
+```sql
+UPDATE notifications
+SET isRead = TRUE
+WHERE id = ?;
+```
+
+---
+
+### 5. Mark All Notifications as Read
+
+**API**
+
+```text
+PATCH /api/notifications/read-all
+```
+
+**SQL Query**
+
+```sql
+UPDATE notifications
+SET isRead = TRUE;
+```
+
+---
+
+### 6. Delete Notification
+
+**API**
+
+```text
+DELETE /api/notifications/{id}
+```
+
+**SQL Query**
+
+```sql
+DELETE FROM notifications
+WHERE id = ?;
+```
+
+---
+
+## Conclusion
+
+MySQL is a good choice for this notification system because it is simple and suitable for storing structured data. As the number of notifications increases, techniques like indexing, pagination, and database optimization can help improve performance. The SQL queries shown above support the REST APIs designed in Stage 1.
+
+
