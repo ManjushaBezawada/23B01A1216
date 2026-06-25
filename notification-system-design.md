@@ -522,3 +522,49 @@ Instead of fetching notifications from the database on every page load, I would 
 
 Using caching, pagination, and fetching only required notifications can improve performance and reduce database load while giving users a better experience.
 
+# Stage 5
+
+## Problems in the Current Implementation
+
+* Notifications are sent one by one, so it is slow.
+* If email sending fails, some students will not receive notifications.
+* The process may stop in the middle.
+
+---
+
+## Solution
+
+* Save the notification in the database first.
+* Use a queue to send emails in the background.
+* Retry sending emails if they fail.
+
+---
+
+## Should Database Save and Email Sending Happen Together?
+
+**No.**
+
+The notification should be saved first. Email sending can happen later. This makes the system more reliable.
+
+---
+
+## Revised Pseudocode
+
+```text
+function notify_all(student_ids, message):
+
+    save_to_db(student_ids, message)
+
+    for each student_id in student_ids:
+        add_to_queue(student_id, message)
+
+    worker:
+        send_email(student_id, message)
+        push_to_app(student_id, message)
+```
+
+---
+
+## Conclusion
+
+Saving data first and sending emails through a queue makes the notification system faster and more reliable.
