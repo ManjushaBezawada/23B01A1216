@@ -409,3 +409,73 @@ WHERE id = ?;
 MySQL is a good choice for this notification system because it is simple and suitable for storing structured data. As the number of notifications increases, techniques like indexing, pagination, and database optimization can help improve performance. The SQL queries shown above support the REST APIs designed in Stage 1.
 
 
+# Stage 3
+
+## Query Review
+
+### Given Query
+
+```sql
+SELECT * FROM notifications
+WHERE studentID = 1042 AND isRead = false
+ORDER BY createdAt DESC;
+```
+
+### Is the Query Correct?
+
+Yes. It correctly returns all unread notifications of the student and sorts them by latest notification.
+
+---
+
+## Why is it Slow?
+
+* The table has millions of records.
+* If there is no proper index, the database scans many rows before finding the result.
+
+---
+
+## Improvement
+
+Create a composite index on:
+
+```sql
+(studentID, isRead, createdAt)
+```
+
+This helps the database find the required records much faster.
+
+**Computation Cost**
+
+* Without index: **O(n)**
+* With index: **Approximately O(log n)**
+
+---
+
+## Should We Add Indexes on Every Column?
+
+**No.**
+
+Reasons:
+
+* Indexes use extra storage.
+* Insert and update operations become slower.
+* Only frequently searched columns should be indexed.
+
+---
+
+## SQL Query
+
+Find all students who received **Placement** notifications in the last 7 days.
+
+```sql
+SELECT DISTINCT studentID
+FROM notifications
+WHERE notificationType = 'Placement'
+AND createdAt >= NOW() - INTERVAL 7 DAY;
+```
+
+---
+
+## Conclusion
+
+Using the right indexes improves query performance. Adding indexes only where needed is better than indexing every column.
