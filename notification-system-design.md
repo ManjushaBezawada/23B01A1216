@@ -479,3 +479,46 @@ AND createdAt >= NOW() - INTERVAL 7 DAY;
 ## Conclusion
 
 Using the right indexes improves query performance. Adding indexes only where needed is better than indexing every column.
+
+# Stage 4
+
+## Solution
+
+Instead of fetching notifications from the database on every page load, I would use **caching**. Frequently used notifications can be stored in the cache, so the database is accessed less often.
+
+---
+
+## Performance Improvements
+
+* Use caching to reduce database requests.
+* Use pagination to load fewer notifications at a time.
+* Fetch only unread or recent notifications instead of all notifications.
+
+---
+
+## Tradeoffs
+
+### Caching
+
+**Advantage:** Faster response and less database load.
+
+**Disadvantage:** Cached data may not always be the latest.
+
+### Pagination
+
+**Advantage:** Loads fewer records, improving speed.
+
+**Disadvantage:** Users need to open multiple pages to see all notifications.
+
+### Fetch Recent Notifications
+
+**Advantage:** Reduces unnecessary data transfer.
+
+**Disadvantage:** Older notifications require another request to view.
+
+---
+
+## Conclusion
+
+Using caching, pagination, and fetching only required notifications can improve performance and reduce database load while giving users a better experience.
+
